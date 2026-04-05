@@ -34,3 +34,33 @@ export const createTransactionSchema = z.object({
     .enum(["DAILY", "WEEKLY", "MONTHLY", "YEARLY"])
     .optional(),
 });
+
+
+
+export const updateTransactionSchema = z.object({
+  amount: z.number().positive().optional(),
+
+  type: z.enum(["INCOME", "EXPENSE"]).optional(),
+
+  category: z.string().min(1).optional(),
+
+  subCategory: z.string().min(1).optional(),
+
+  currency: z.string().optional(),
+
+  note: z.string().max(500).optional(),
+
+  referenceId: z.string().optional(),
+
+  paymentMethod: z
+    .enum(["CASH", "CARD", "UPI", "BANK_TRANSFER", "OTHER"])
+    .optional(),
+
+  transactionDate: z.coerce.date().optional(),
+
+  isRecurring: z.boolean().optional(),
+
+  recurrenceInterval: z
+    .enum(["DAILY", "WEEKLY", "MONTHLY", "YEARLY"])
+    .optional(),
+});
