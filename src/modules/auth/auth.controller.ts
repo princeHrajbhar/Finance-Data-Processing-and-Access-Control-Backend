@@ -1,3 +1,4 @@
+//Finance_backend\src\modules\auth\auth.controller.ts
 import { Request, Response, NextFunction } from "express";
 import * as authService from "./auth.service.js";
 import { buildToken } from "./auth.service.js";

@@ -1,3 +1,4 @@
+//Finance_backend\src\middlewares\validate.middleware.ts
 import { Request, Response, NextFunction } from "express";
 import { ZodSchema } from "zod";
 import { AppError, ErrorCode } from "../errors/AppError.js";

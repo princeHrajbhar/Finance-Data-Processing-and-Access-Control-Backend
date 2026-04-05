@@ -1,3 +1,4 @@
+//Finance_backend\src\modules\auth\auth.service.ts
 import bcrypt from "bcrypt";
 import { User, OTP, Session } from "./auth.model.js";
 import { generateOTP, generateSecureToken } from "./auth.utils.js";
@@ -154,18 +155,20 @@ export const loginUser = async (
   }
 
   // Generate opaque refresh token + store its hash
-  const refreshToken = generateSecureToken();
-  const refreshTokenHash = await bcrypt.hash(refreshToken, BCRYPT_ROUNDS);
+  const refreshTokenRaw = generateSecureToken();
+const refreshTokenHash = await bcrypt.hash(refreshTokenRaw, BCRYPT_ROUNDS);
 
-  const session = await Session.create({
-    userId:           user._id,
-    refreshTokenHash,
-    userAgent:        meta.userAgent,
-    ip:               meta.ip,
-    expiresAt:        new Date(Date.now() + SESSION_EXPIRY_MS),
-    lastUsedAt:       new Date(),
-  });
+const session = await Session.create({
+  userId: user._id,
+  refreshTokenHash,
+  userAgent: meta.userAgent,
+  ip: meta.ip,
+  expiresAt: new Date(Date.now() + SESSION_EXPIRY_MS),
+  lastUsedAt: new Date(),
+});
 
+// 🔥 IMPORTANT FIX
+const refreshToken = buildToken(session._id.toString(), refreshTokenRaw);
   const accessToken = generateAccessTokenForSession(
     user._id.toString(),
     user.role,
@@ -240,6 +243,11 @@ export const refreshTokenService = async (oldToken: string) => {
 
   logger.info({ userId: user._id, sessionId: session._id }, "Token refreshed");
   return { newAccessToken, newRefreshToken: newTokenWithId };
+
+
+
+
+  
 };
 
 // ─── Logout ───────────────────────────────────────────────────────────────────

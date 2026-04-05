@@ -1,3 +1,4 @@
+//Finance_backend\src\modules\auth\auth.jwt.ts
 import jwt from "jsonwebtoken";
 import { AppError, ErrorCode } from "../../errors/AppError.js";
 

@@ -1,3 +1,4 @@
+//Finance_backend\src\modules\auth\auth.route.ts
 import { Router } from "express";
 import * as authController from "./auth.controller.js";
 import { protect, authorize } from "../../middlewares/auth.middleware.js";

@@ -1,3 +1,4 @@
+//Finance_backend\src\modules\auth\auth.validators.ts
 import { z } from "zod";
 
 const passwordSchema = z
