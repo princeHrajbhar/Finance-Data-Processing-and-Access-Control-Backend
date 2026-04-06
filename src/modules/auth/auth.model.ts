@@ -1,10 +1,6 @@
 //Finance_backend\src\modules\auth\auth.model.ts
 import mongoose, { Schema, Document } from "mongoose";
 
-// ─── Shared timestamps mixin ──────────────────────────────────────────────────
-// Mongoose adds createdAt / updatedAt automatically when { timestamps: true }
-// is set on a schema, but it does NOT inject them into Document by default.
-// We declare them here once and mix them into every interface that needs them.
 
 interface Timestamps {
   createdAt: Date;
@@ -16,10 +12,7 @@ interface Timestamps {
 export interface ISession extends Document, Timestamps {
   _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
-  /**
-   * bcrypt hash of the actual refresh token.
-   * Never store the plaintext token.
-   */
+
   refreshTokenHash: string;
   userAgent?: string;
   ip?: string;

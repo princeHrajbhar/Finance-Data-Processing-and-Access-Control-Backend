@@ -1,11 +1,10 @@
 import { Transaction } from "../transaction/transaction.model";
-import { User } from "../auth/auth.model.js";
-import mongoose from "mongoose";
+import { User } from "../auth/auth.model";
 
-// ─── Summary ─────────────────────────────────────────────
-export const getSummary = async (userId: string) => {
+// ─── 1. GLOBAL SUMMARY ─────────────────────────────────
+export const getSummary = async () => {
   const result = await Transaction.aggregate([
-    { $match: { userId: new mongoose.Types.ObjectId(userId), isDeleted: false } },
+    { $match: { isDeleted: false } },
     {
       $group: {
         _id: "$type",
@@ -28,12 +27,11 @@ export const getSummary = async (userId: string) => {
   };
 };
 
-// ─── Category Breakdown ─────────────────────────────────
-export const getCategoryBreakdown = async (userId: string, type: string) => {
+// ─── 2. GLOBAL CATEGORY BREAKDOWN ──────────────────────
+export const getCategoryBreakdown = async (type: string) => {
   return await Transaction.aggregate([
     {
       $match: {
-        userId: new mongoose.Types.ObjectId(userId),
         type,
         isDeleted: false
       }
@@ -47,15 +45,10 @@ export const getCategoryBreakdown = async (userId: string, type: string) => {
   ]);
 };
 
-// ─── Monthly Trends ─────────────────────────────────────
-export const getMonthlyTrends = async (userId: string) => {
+// ─── 3. GLOBAL MONTHLY TRENDS ──────────────────────────
+export const getMonthlyTrends = async () => {
   return await Transaction.aggregate([
-    {
-      $match: {
-        userId: new mongoose.Types.ObjectId(userId),
-        isDeleted: false
-      }
-    },
+    { $match: { isDeleted: false } },
     {
       $group: {
         _id: {
@@ -78,24 +71,20 @@ export const getMonthlyTrends = async (userId: string) => {
   ]);
 };
 
-// ─── Recent Transactions ────────────────────────────────
-export const getRecentTransactions = async (userId: string) => {
+// ─── 4. GLOBAL RECENT TRANSACTIONS ─────────────────────
+export const getRecentTransactions = async () => {
   return await Transaction.find({
-    userId,
     isDeleted: false
   })
     .sort({ transactionDate: -1 })
     .limit(5);
 };
 
-// ─── Advanced Analytics ─────────────────────────────────
-export const getAdvancedAnalytics = async (userId: string, query: any) => {
+// ─── 5. GLOBAL ADVANCED ANALYTICS ──────────────────────
+export const getAdvancedAnalytics = async (query: any) => {
   const { startDate, endDate, type, category } = query;
 
-  const match: any = {
-    userId: new mongoose.Types.ObjectId(userId),
-    isDeleted: false
-  };
+  const match: any = { isDeleted: false };
 
   if (startDate && endDate) {
     match.transactionDate = {
@@ -118,14 +107,19 @@ export const getAdvancedAnalytics = async (userId: string, query: any) => {
   ]);
 };
 
-// ─── Admin: System Stats ────────────────────────────────
+// ─── 6. ADMIN: SYSTEM STATS ────────────────────────────
 export const getSystemStats = async () => {
   const totalUsers = await User.countDocuments();
   const totalTransactions = await Transaction.countDocuments();
 
   const totalRevenue = await Transaction.aggregate([
     { $match: { type: "INCOME", isDeleted: false } },
-    { $group: { _id: null, total: { $sum: "$amount" } } }
+    {
+      $group: {
+        _id: null,
+        total: { $sum: "$amount" }
+      }
+    }
   ]);
 
   return {
@@ -135,7 +129,7 @@ export const getSystemStats = async () => {
   };
 };
 
-// ─── Admin: User Analytics ──────────────────────────────
+// ─── 7. ADMIN: USER ANALYTICS ──────────────────────────
 export const getUserAnalytics = async () => {
   return await Transaction.aggregate([
     { $match: { isDeleted: false } },

@@ -168,7 +168,6 @@ export const updateTransactionService = async (
   transactionId: string,
   payload: any
 ) => {
-  // ✅ Validate ID
   if (!mongoose.Types.ObjectId.isValid(transactionId)) {
     throw new AppError(
       "Invalid transaction ID",
@@ -207,7 +206,6 @@ export const updateTransactionService = async (
     );
   }
 
-  // ✅ Update fields dynamically
   Object.assign(transaction, payload);
 
   transaction.updatedBy = new mongoose.Types.ObjectId(userId);
