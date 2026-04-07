@@ -26,7 +26,6 @@ export const updateUserRoleService = async (
     );
   }
 
-  // 🔥 Prevent admin from changing their own role (optional but recommended)
   if (adminUserId === targetUserId) {
     throw new AppError(
       "You cannot change your own role",
